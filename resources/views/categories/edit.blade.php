@@ -5,7 +5,12 @@
 @section('content')
 <div class="max-w-3xl space-y-6">
 
-    <!-- Header -->
+    {{-- =========================================================
+    | Header
+    |=========================================================
+    | Título y descripción de la vista de edición
+    |=========================================================
+    --}}
     <div>
         <h1 class="text-2xl font-semibold text-white">Editar categoría</h1>
         <p class="text-sm text-gray-400">
@@ -13,45 +18,87 @@
         </p>
     </div>
 
-    <!-- Form -->
+    {{-- =========================================================
+    | CONTENEDOR ALPINE (CRÍTICO)
+    |=========================================================
+    | ❌ Error que tuvimos inicialmente:
+    | - El botón del modal intentaba ejecutar:
+    |     $refs.editForm.submit()
+    | - Pero el formulario NO estaba dentro de x-data
+    | - Resultado: el submit nunca se ejecutaba
+    |
+    | ✅ Solución correcta:
+    | - Envolver el form en un div con x-data
+    | - Alpine registra correctamente x-ref
+    |=========================================================
+    --}}
     <div x-data>
+
+        {{-- =====================================================
+        | Formulario de edición
+        |=====================================================
+        | - Usa método PUT (via @method)
+        | - NO se envía automáticamente
+        | - Se envía solo tras confirmar en el modal
+        |=====================================================
+        --}}
         <form
-            x-ref="editForm"
+            x-ref="editForm" {{-- Referencia usada por el modal --}}
             method="POST"
             action="{{ route('categories.update', $category) }}"
             enctype="multipart/form-data"
             class="bg-[#111827] border border-[#1F2933] rounded-2xl p-6 space-y-6 shadow-lg"
         >
+            {{-- Seguridad --}}
             @csrf
             @method('PUT')
 
-            <!-- Name -->
+            {{-- =================================================
+            | Campo: Nombre
+            |=================================================
+            --}}
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">
                     Nombre
                 </label>
+
                 <input
                     type="text"
                     name="name"
                     value="{{ old('name', $category->name) }}"
                     required
-                    class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-[#F59E0B]"
+                    class="w-full bg-[#0B1220] border border-[#1F2933]
+                           rounded-lg px-4 py-2 text-white
+                           focus:ring-2 focus:ring-[#F59E0B]"
                 >
             </div>
 
-            <!-- Description -->
+            {{-- =================================================
+            | Campo: Descripción
+            |=================================================
+            --}}
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">
                     Descripción
                 </label>
+
                 <textarea
                     name="description"
                     rows="4"
-                    class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-[#F59E0B]"
+                    class="w-full bg-[#0B1220] border border-[#1F2933]
+                           rounded-lg px-4 py-2 text-white
+                           focus:ring-2 focus:ring-[#F59E0B]"
                 >{{ old('description', $category->description) }}</textarea>
             </div>
 
-            <!-- Image -->
+            {{-- =================================================
+            | Campo: Imagen
+            |=================================================
+            | - Muestra la imagen actual (si existe)
+            | - Permite subir una nueva
+            | - La lógica de reemplazo vive en el Service
+            |=================================================
+            --}}
             <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-300">
                     Imagen
@@ -71,15 +118,44 @@
                 >
             </div>
 
-            <!-- Actions -->
+            {{-- =================================================
+            | Acciones
+            |=================================================
+            --}}
             <div class="flex justify-end gap-3">
+
+                {{-- Cancelar: navegación normal --}}
                 <a
                     href="{{ route('categories.index') }}"
-                    class="px-4 py-2 rounded-lg border border-[#1F2933] text-gray-300 hover:bg-[#0B1220]"
+                    class="px-4 py-2 rounded-lg border border-[#1F2933]
+                           text-gray-300 hover:bg-[#0B1220]"
                 >
                     Cancelar
                 </a>
 
+                {{-- =================================================
+                | Botón Actualizar (PUNTO CLAVE)
+                |=================================================
+                | ❌ Error común:
+                | - Usar type="submit"
+                | - El form se enviaba sin confirmación
+                |
+                | ❌ Otro error previo:
+                | - Intentar pasar action/method al modal
+                |
+                | ✅ Implementación correcta:
+                | - type="button"
+                | - Abre modal de confirmación
+                | - El modal ejecuta:
+                |     $refs.editForm.submit()
+                |
+                | Resultado:
+                | ✔ Confirmación previa
+                | ✔ Un solo formulario
+                | ✔ PUT correcto
+                | ✔ Sin errores 419
+                |=================================================
+                --}}
                 <button
                     type="button"
                     @click="$store.modal.show({
@@ -91,6 +167,7 @@
                 >
                     Actualizar
                 </button>
+
             </div>
         </form>
     </div>
