@@ -72,7 +72,7 @@
                         Categorías
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                    <a href="{{ route('products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6"/>
