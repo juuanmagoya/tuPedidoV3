@@ -37,37 +37,32 @@
     <!-- =========================================================
          BUSCADOR / FILTROS
          ========================================================= -->
-    <form method="GET" action="{{ route('products.index') }}" class="flex flex-wrap gap-4 mb-6">
+    <form method="GET" action="{{ route('products.index') }}" class="flex flex-wrap gap-4 mb-6"> 
+        {{-- Nombre --}} 
+        <input type="text" name="name" value="{{ request('name') }}" placeholder="Buscar por nombre" 
+        class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]" > 
+        
+        {{-- Estado --}} 
+        <select name="status" class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]"> 
+            <option value="">Todos los estados</option> 
+            <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Activo</option> <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactivo</option> 
+        </select> 
+        
+        {{-- Categoría --}} 
+        <select name="category_id" class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]"> 
+            <option value="">Todas las categorías</option> @foreach($categories as $category) <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}> {{ $category->name }} 
+            </option> @endforeach 
+        </select> 
+        
+        <button type="submit" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-black px-4 py-2 rounded-lg font-semibold"> Filtrar </button> 
 
-        {{-- Nombre --}}
-        <input
-            type="text"
-            name="name"
-            value="{{ request('name') }}"
-            placeholder="Buscar por nombre"
-            class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]"
-        >
+        @if(request()->hasAny(['name', 'status', 'category_id']))
+            <a href="{{ route('products.index') }}"
+            class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold flex items-center">
+                Eliminar filtros
+            </a>
+        @endif
 
-        {{-- Estado --}}
-        <select name="status" class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]">
-            <option value="">Todos los estados</option>
-            <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Activo</option>
-            <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactivo</option>
-        </select>
-
-        {{-- Categoría --}}
-        <select name="category_id" class="px-4 py-2 rounded-lg bg-[#111827] text-white border border-[#1F2933] focus:ring-[#F59E0B]">
-            <option value="">Todas las categorías</option>
-            @foreach($categories as $category)
-                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </select>
-
-        <button type="submit" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-black px-4 py-2 rounded-lg font-semibold">
-            Filtrar
-        </button>
     </form>
 
     <!-- =========================================================

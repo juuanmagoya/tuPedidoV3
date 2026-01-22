@@ -5,11 +5,12 @@ use App\DTOs\ProductDTO;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductService
 {
     public function __construct(
-        protected ProductRepositoryInterface $productRepository
+        protected ProductRepositoryInterface $productRepository 
     ) {}
 
     public function getAll(): Collection
@@ -32,7 +33,8 @@ class ProductService
         $this->productRepository->delete($product);
     }
      // ✅ Método search con filtros
-    public function search(array $filters = [])
+    
+    public function search(array $filters = []): LengthAwarePaginator
     {
         return $this->productRepository->search($filters);
     }

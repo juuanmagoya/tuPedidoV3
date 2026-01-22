@@ -4,12 +4,15 @@ namespace App\Repositories\Contracts;
 use App\DTOs\ProductDTO;
 use App\Models\Product;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface
 {
     public function all(): Collection;
 
     public function find(int $id): ?Product;
+
+    public function search(array $filters = []): LengthAwarePaginator;
 
     public function create(ProductDTO $dto): Product;
 

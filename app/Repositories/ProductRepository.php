@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\DTOs\ProductDTO;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -34,7 +35,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product->delete();
     }
-    public function search(array $filters = [])
+    public function search(array $filters = []):  LengthAwarePaginator
     {
         $query = Product::with('category')->latest();
 
@@ -50,7 +51,7 @@ class ProductRepository implements ProductRepositoryInterface
             $query->where('category_id', $filters['category_id']);
         }
 
-        // Devuelve siempre una colección, aunque no haya resultados
-        return $query->get(); // <-- importante, no return null
+        return $query->paginate(10)->withQueryString();
     }
+
 }
