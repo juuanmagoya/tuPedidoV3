@@ -9,6 +9,7 @@ use App\Services\ProductService;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 //Las Validaciones las hacemos en el Request
 
@@ -67,6 +68,8 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $this->productService->delete($product);
+
+        Cache::forget('products.index');
 
         return redirect()->back()->with('success', 'Producto eliminado correctamente');
     }

@@ -3,7 +3,8 @@
 @section('title', 'Categorías')
 
 @section('content')
-<div class="space-y-10">
+<div class="space-y-10 pb-24">
+
 
     <!-- =========================================================
          HEADER

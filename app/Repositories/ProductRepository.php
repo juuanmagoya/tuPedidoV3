@@ -51,7 +51,7 @@ class ProductRepository implements ProductRepositoryInterface
             $query->where('category_id', $filters['category_id']);
         }
 
-        return $query->paginate(10)->withQueryString();
+        return $query->paginate(15)->withQueryString();
     }
 
 }
