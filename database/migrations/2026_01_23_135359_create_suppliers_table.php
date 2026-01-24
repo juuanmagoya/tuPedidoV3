@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('email')->nullable(); //Correo
             $table->string('address')->nullable(); //Direccion
 
-            $table->string('contact_name')->nullable(); //Nombre del contacto (vendedor, encargado)
+            $table->string('contact_name')->nullable(); //Nombre del contacto y/o (vendedor, encargado)
             $table->string('payment_terms')->nullable(); //Terminos de pago (contado, 30 dias, etc)
 
             $table->text('notes')->nullable(); //Notas adicionales

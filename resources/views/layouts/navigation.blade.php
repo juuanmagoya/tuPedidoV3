@@ -88,7 +88,7 @@
                         Usuarios
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                    <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"/>

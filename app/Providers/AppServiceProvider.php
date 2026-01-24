@@ -7,6 +7,8 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\ProductRepository;
+use App\Repositories\Supplier\SupplierRepository;
+use App\Repositories\Supplier\SupplierRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
             ProductRepositoryInterface::class,
             ProductRepository::class
         );
+        
+        //Supplier
+        $this->app->bind(
+        SupplierRepositoryInterface::class,
+        SupplierRepository::class
+    );
     }
 
     public function boot(): void
