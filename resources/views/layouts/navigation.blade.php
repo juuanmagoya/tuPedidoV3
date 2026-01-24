@@ -56,7 +56,30 @@
                     Dashboard
                 </a>
             </div>
+            <!-- Producción -->
+            <div>
+                <p class="text-xs text-yellow-500 mb-2 tracking-wider">
+                    PRODUCCIÓN
+                </p>
+                
+                <nav class="space-y-2">
+                    <a href="{{ route('inputs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0h1a3 3 0 003-3v-1a3 3 0 00-3-3h-1M4 17h1a3 3 0 003-3v-1a3 3 0 00-3-3H4m0 0H3a3 3 0 00-3 3v1a3 3 0 003 3h1"/>
+                        </svg>
+                        Insumos
+                    </a>
 
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Producción
+                    </a>
+                </nav>
+            </div>
             <!-- GESTIÓN -->
             <div>
                 <p class="text-xs text-yellow-500 mb-2 tracking-wider">

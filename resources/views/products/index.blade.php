@@ -27,20 +27,12 @@
     <!-- =========================================================
          ALERTA DE BAJO STOCK
          ========================================================= -->
-    @if($lowStockProducts->isNotEmpty())
-        <div x-data="{ open: true }" x-show="open"
-             class="bg-red-600/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-4">
+    <x-low-stock-alert
+    :items="$lowStockProducts"
+    title="¡Productos con bajo stock!"
+    entity="producto"
+    />
 
-            <div class="flex-1">
-                @include('products._low_stock_alert', ['products' => $lowStockProducts])
-            </div>
-
-            <button @click="open = false"
-                    class="text-red-400 hover:text-red-300 font-bold">
-                ✕
-            </button>
-        </div>
-    @endif
 
     <!-- =========================================================
          BUSCADOR / FILTROS

@@ -9,6 +9,8 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\ProductRepository;
 use App\Repositories\Supplier\SupplierRepository;
 use App\Repositories\Supplier\SupplierRepositoryInterface;
+use App\Repositories\Input\InputRepository;
+use App\Repositories\Input\InputRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +32,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
         SupplierRepositoryInterface::class,
         SupplierRepository::class
-    );
+        );
+
+        // Input
+        $this->app->bind(
+        InputRepositoryInterface::class,
+        InputRepository::class
+        );
     }
 
     public function boot(): void

@@ -19,4 +19,9 @@ class Supplier extends Model
         'notes',
         'is_active',
     ];
+
+    public function inputs()
+    {
+        return $this->hasMany(Input::class);
+    }
 }
