@@ -2,39 +2,36 @@
 
 namespace App\Repositories\Production;
 
-use App\Models\ProductionInput;
-use App\Repositories\Production\Contracts\ProductionInputRepositoryInterface;
+use App\Models\ProductionProduct;
+use App\Repositories\Production\Contracts\ProductionProductRepositoryInterface;
 
-class ProductionInputRepository implements ProductionInputRepositoryInterface
+class ProductionProductRepository implements ProductionProductRepositoryInterface
 {
-    public function create(array $data): ProductionInput
+    public function create(array $data): ProductionProduct
     {
-        return ProductionInput::create($data);
+        return ProductionProduct::create($data);
     }
 
-    public function createMany(int $productionId, array $inputs): void
+    public function createMany(int $productionId, array $products): void
     {
         $rows = [];
 
-        foreach ($inputs as $input) {
+        foreach ($products as $product) {
             $rows[] = [
                 'production_id' => $productionId,
-                'input_id'      => $input['input_id'],
-                'quantity'      => $input['quantity'],
-                'unit'          => $input['unit'],
-                'cost_price'    => $input['cost_price'],
+                'product_id'    => $product['product_id'],
+                'quantity'      => $product['quantity'],
+                'unit'          => $product['unit'],
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ];
         }
 
-        ProductionInput::insert($rows);
+        ProductionProduct::insert($rows);
     }
 
     public function findByProduction(int $productionId): array
     {
-        return ProductionInput::where('production_id', $productionId)
-            ->get()
-            ->toArray();
+        return ProductionProduct::where('production_id', $productionId)->get()->toArray();
     }
 }

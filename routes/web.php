@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InputController;
+use App\Http\Controllers\ProductionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('inputs', InputController::class);
+    Route::resource('productions', ProductionController::class);
 
 });
 
