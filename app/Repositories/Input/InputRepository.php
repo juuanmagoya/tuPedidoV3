@@ -28,6 +28,11 @@ class InputRepository implements InputRepositoryInterface
 
         return $input;
     }
+    public function updateStock(Input $input, float $stock): void
+    {
+        $input->update(['stock' => $stock]);
+    }
+
 
     public function delete(Input $input): void
     {

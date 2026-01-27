@@ -11,6 +11,12 @@ use App\Repositories\Supplier\SupplierRepository;
 use App\Repositories\Supplier\SupplierRepositoryInterface;
 use App\Repositories\Input\InputRepository;
 use App\Repositories\Input\InputRepositoryInterface;
+use App\Repositories\Production\Contracts\ProductionRepositoryInterface;
+use App\Repositories\Production\ProductionRepository;
+use App\Repositories\Production\Contracts\ProductionInputRepositoryInterface;
+use App\Repositories\Production\ProductionInputRepository;
+use App\Repositories\Production\Contracts\ProductionProductRepositoryInterface;
+use App\Repositories\Production\ProductionProductRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +44,24 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
         InputRepositoryInterface::class,
         InputRepository::class
+        );
+
+        // Production
+        $this->app->bind(
+        ProductionRepositoryInterface::class,
+        ProductionRepository::class
+        );
+
+        // Production Input
+        $this->app->bind(
+        ProductionInputRepositoryInterface::class,
+        ProductionInputRepository::class
+        );
+
+        //Production Product
+        $this->app->bind(
+        ProductionProductRepositoryInterface::class,
+        ProductionProductRepository::class
         );
     }
 

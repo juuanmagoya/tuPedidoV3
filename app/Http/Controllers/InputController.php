@@ -75,7 +75,7 @@ class InputController extends Controller
      */
     public function destroy(Input $input)
     {
-        $this->inputService->delete($input->id);
+        $this->inputService->delete($input);
 
         return redirect()
             ->route('inputs.index')

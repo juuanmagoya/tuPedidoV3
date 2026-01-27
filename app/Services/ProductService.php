@@ -103,4 +103,14 @@ class ProductService
         // Si usás Redis o Memcached podrías usar tags
         // Cache::tags('products')->flush();
     }
+    
+    /**
+     * Aumentar stock de un producto
+     */
+    public function increaseStock(int $productId, float $quantity): void
+    {
+        $product = Product::findOrFail($productId);
+
+        $product->increment('stock', $quantity);
+    }
 }

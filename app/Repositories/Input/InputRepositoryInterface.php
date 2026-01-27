@@ -16,4 +16,7 @@ interface InputRepositoryInterface
     public function update(Input $input, array $data): Input;
 
     public function delete(Input $input): void;
+    
+    public function updateStock(Input $input, float $stock): void;
+
 }

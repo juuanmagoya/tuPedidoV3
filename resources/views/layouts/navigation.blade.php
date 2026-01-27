@@ -38,7 +38,10 @@
         </div>
 
         <!-- MENU -->
-        <div class="flex-1 px-4 py-6 space-y-6 text-sm">
+        <div class="flex-1 px-4 py-6 space-y-6 text-sm overflow-y-auto custom-scrollbar">
+
+
+
 
             <!-- PRINCIPAL -->
             <div>
