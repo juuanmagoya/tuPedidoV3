@@ -12,6 +12,7 @@ class ProductionInputRepository implements ProductionInputRepositoryInterface
         return ProductionInput::create($data);
     }
 
+
     public function createMany(int $productionId, array $inputs): void
     {
         $rows = [];

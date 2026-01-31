@@ -9,6 +9,7 @@ class InputDTO
         public readonly string $unit,
         public readonly float $stock,
         public readonly ?float $min_stock,
+        public readonly float $cost_price,
         public readonly bool $is_active,
         public readonly ?string $notes,
     ) {}
@@ -22,9 +23,8 @@ class InputDTO
             name: $data['name'],
             unit: $data['unit'],
             stock: (float) $data['stock'],
-            min_stock: isset($data['min_stock'])
-                ? (float) $data['min_stock']
-                : null,
+            min_stock: isset($data['min_stock']) ? (float) $data['min_stock'] : null,
+            cost_price: (float) $data['cost_price'],
             is_active: (bool) $data['is_active'],
             notes: $data['notes'] ?? null,
         );
@@ -40,6 +40,7 @@ class InputDTO
             'unit'       => $this->unit,
             'stock'      => $this->stock,
             'min_stock'  => $this->min_stock,
+            'cost_price' => $this->cost_price,
             'is_active'  => $this->is_active,
             'notes'      => $this->notes,
         ];

@@ -22,7 +22,8 @@
     <div class="flex flex-wrap gap-2">
         @foreach($items as $item)
             <span class="bg-red-500 px-3 py-1 rounded-full text-sm font-medium">
-                {{ $item->name }} ({{ $item->stock }})
+                {{ $item->name }} {{ rtrim(rtrim(number_format($item->stock, 3, '.', ''), '0'), '.') }} {{ $item->unit }}
+
             </span>
         @endforeach
     </div>

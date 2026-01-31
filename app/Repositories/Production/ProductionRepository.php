@@ -8,16 +8,21 @@ use App\Repositories\Production\Contracts\ProductionRepositoryInterface;
 
 class ProductionRepository implements ProductionRepositoryInterface
 {
-    public function all()//: Collection
+    public function getAll()
     {
-        return Production::orderBy('production_date', 'desc')->get();
+        return Production::with('creator')
+            ->orderByDesc('production_date')
+            ->get();
     }
 
-    public function findById(int $id): ?Production
+    public function findById(int $id): Production
     {
-        return Production::find($id);
+        return Production::with([
+            'inputs.input',      // production_inputs → input
+            'products.product',  // production_products → product
+            'creator',
+        ])->findOrFail($id);
     }
-
     public function create(array $data): Production
     {
         return Production::create($data);
@@ -28,4 +33,5 @@ class ProductionRepository implements ProductionRepositoryInterface
         $production->update($data);
         return $production;
     }
+
 }

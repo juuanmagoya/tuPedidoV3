@@ -8,6 +8,7 @@ use App\Services\Production\ProductionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
+
 class ProductionController extends Controller
 {
     public function __construct(
@@ -38,18 +39,21 @@ class ProductionController extends Controller
     /**
      * Registrar producción
      */
-    public function store(StoreProductionRequest $request): RedirectResponse
-    {
-        $this->productionService->create(
-            $request->validated()
-        );
-
+public function store(StoreProductionRequest $request)
+{
+    try {
+        $this->productionService->create($request->validated());
 
         return redirect()
             ->route('productions.index')
             ->with('success', 'Producción registrada correctamente');
-    }
 
+    } catch (\DomainException $e) {
+        return back()
+            ->withErrors(['business' => $e->getMessage()])
+            ->withInput();
+    }
+}
     /**
      * Ver detalle de producción
      */

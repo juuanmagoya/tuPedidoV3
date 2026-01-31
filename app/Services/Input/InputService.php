@@ -25,9 +25,16 @@ class InputService
     /**
      * Obtener insumo por ID
      */
-    public function getById(int $id): ?Input
+
+    public function getById(int $id): Input
     {
-        return $this->inputRepository->findById($id);
+        $input = $this->inputRepository->findById($id);
+
+        if (!$input) {
+            throw new \Exception("Insumo no encontrado");
+        }
+
+        return $input;
     }
 
     /**
@@ -78,18 +85,14 @@ class InputService
     /**
      * 🔻 Disminuir stock de un insumo (Producción)
      */
-    public function decreaseStock(int $inputId, float $quantity): void
+    public function decreaseStock(Input $input, float $quantity): void
     {
-        $input = $this->getById($inputId);
-
-        if (!$input) {
-            throw new \RuntimeException('Insumo no encontrado');
+        if ($input->stock < $quantity) {
+            throw new \Exception("Stock insuficiente para el insumo {$input->name}");
         }
 
-        $this->inputRepository->updateStock(
-            $input,
-            $input->stock - $quantity
-        );
+        $input->decrement('stock', $quantity);
     }
+
 
 }

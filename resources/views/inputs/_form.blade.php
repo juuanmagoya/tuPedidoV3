@@ -46,6 +46,21 @@
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
         @enderror
     </div>
+    <!-- Precio de costo -->
+    <div>
+        <label class="block text-sm text-gray-300 mb-1">Precio de costo</label>
+        <input
+            type="number"
+            step="0.01"
+            name="cost_price"
+            value="{{ old('cost_price', $input->cost_price ?? '') }}"
+            class="w-full border rounded-lg p-2 bg-[#1F2933] text-white"
+        >
+        @error('cost_price')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+
 
     <!-- Estado -->
     <div>

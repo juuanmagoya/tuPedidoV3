@@ -12,7 +12,7 @@ class ProductionInput extends Model
     protected $table = 'production_inputs';
     protected $fillable = [
         'production_id',   // Producción a la que pertenece
-        'insumo_id',       // Insumo utilizado
+        'inputs_id',       // Insumo utilizado
         'quantity_used',   // Cantidad consumida
         'unit',            // Unidad (kg, g, lt, etc.)
         'cost_price',      // Precio costo unitario al momento

@@ -104,13 +104,24 @@ class ProductService
         // Cache::tags('products')->flush();
     }
     
+    public function getById(int $id): Product
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            throw new \Exception('Producto no encontrado');
+        }
+
+        return $product;
+    }
+    
     /**
      * Aumentar stock de un producto
      */
-    public function increaseStock(int $productId, float $quantity): void
+    public function increaseStock(Product $product, float $quantity): void
     {
-        $product = Product::findOrFail($productId);
-
         $product->increment('stock', $quantity);
     }
+    
+
 }

@@ -2,33 +2,38 @@
 
 namespace App\Services\Production;
 
-use App\DTOs\Production\ProductionDTO;
+use App\Models\Product;
 use App\Models\Production;
-use App\Repositories\Production\Contracts\ProductionRepositoryInterface;
-use App\Repositories\Production\Contracts\ProductionInputRepositoryInterface;
-use App\Repositories\Production\Contracts\ProductionProductRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use App\Services\Input\InputService;
 use App\Services\ProductService;
-use Illuminate\Support\Facades\DB;
-use RuntimeException;
-use Throwable;
+use App\Repositories\Production\ProductionRepository;
+use App\Repositories\Production\ProductionInputRepository;
+use App\Repositories\Production\ProductionProductRepository;
+use Illuminate\Support\Facades\Auth;
 
 class ProductionService
 {
     public function __construct(
-        protected ProductionRepositoryInterface $productionRepository,
-        protected ProductionInputRepositoryInterface $productionInputRepository,
-        protected ProductionProductRepositoryInterface $productionProductRepository,
+        protected ProductionRepository $productionRepository,
+        protected ProductionInputRepository $productionInputRepository,
+        protected ProductionProductRepository $productionProductRepository,
         protected InputService $inputService,
         protected ProductService $productService,
     ) {}
 
+    private function generateCode(): string
+    {
+        $lastId = Production::max('id') + 1;
+
+        return 'PRD-' . str_pad($lastId, 6, '0', STR_PAD_LEFT);
+    }
     /**
      * Obtener todas las producciones
      */
     public function getAll()
     {
-        return $this->productionRepository->all();
+        return $this->productionRepository->getAll();
     }
 
     /**
@@ -36,69 +41,11 @@ class ProductionService
      */
     public function getById(int $id): Production
     {
-        $production = $this->productionRepository->findById($id);
-
-        if (! $production) {
-            throw new RuntimeException('Producción no encontrada');
-        }
-
-        return $production;
+        return $this->productionRepository->findById($id);
     }
 
     /**
-     * Registrar una producción completa
-     * - Crea la cabecera
-     * - Registra insumos consumidos
-     * - Descuenta stock de insumos
-     * - Registra productos generados
-     * - Aumenta stock de productos
-     */
-    public function create(array $data): Production
-    {
-        $dto = ProductionDTO::fromRequest($data);
-
-        return DB::transaction(function () use ($dto) {
-
-            /** 1️⃣ Crear producción (cabecera) */
-            $production = $this->productionRepository->create(
-                $dto->toArray()
-            );
-
-            /** 2️⃣ Registrar insumos consumidos */
-            $this->productionInputRepository->createMany(
-                $production->id,
-                $dto->inputs
-            );
-
-            /** 3️⃣ Descontar stock de insumos */
-            foreach ($dto->inputs as $inputDTO) {
-                $this->inputService->decreaseStock(
-                    $inputDTO->input_id,
-                    $inputDTO->quantity
-                );
-            }
-
-            /** 4️⃣ Registrar productos generados */
-            $this->productionProductRepository->createMany(
-                $production->id,
-                $dto->products
-            );
-
-            /** 5️⃣ Aumentar stock de productos */
-            foreach ($dto->products as $productDTO) {
-                $this->productService->increaseStock(
-                    $productDTO->product_id,
-                    $productDTO->quantity
-                );
-            }
-
-            return $production;
-        });
-    }
-
-    /**
-     * Insumos disponibles para producción
-     * (delegado al módulo de insumos)
+     * Inputs disponibles para formularios
      */
     public function getAvailableInputs()
     {
@@ -106,11 +53,93 @@ class ProductionService
     }
 
     /**
-     * Productos disponibles para producir
-     * (delegado al módulo de productos)
+     * Productos disponibles para formularios
      */
     public function getAvailableProducts()
     {
         return $this->productService->getAll();
     }
+
+    /**
+     * Registrar una producción
+     */
+    
+public function create(array $data): Production
+{
+    return DB::transaction(function () use ($data) {
+
+        /** 1️⃣ Crear producción (costo inicial en 0) */
+        $production = Production::create([
+            'code'            => $this->generateCode(),
+            'production_date' => $data['date'],
+            'status'          => 'draft',
+            'notes'           => $data['description'] ?? null,
+            'created_by'      => Auth::id(),
+            'total_cost'      => 0,
+        ]);
+
+        $totalCost = 0;
+
+        /** 2️⃣ Registrar insumos consumidos + reducir stock */
+        foreach ($data['inputs'] as $row) {
+
+            $input = $this->inputService->getById((int) $row['input_id']);
+
+            $quantity  = (float) $row['quantity'];
+            $costPrice = (float) $input->cost_price;
+            $subtotal  = $quantity * $costPrice;
+
+            $this->productionInputRepository->create([
+                'production_id' => $production->id,
+                'inputs_id'     => $input->id,
+                'quantity_used' => $quantity,
+                'unit'          => $input->unit,
+                'cost_price'    => $costPrice,
+                'subtotal'      => $subtotal,
+            ]);
+
+            // 🔻 bajar stock del insumo
+            $this->inputService->decreaseStock($input, $quantity);
+
+            // 🔢 acumular costo total
+            $totalCost += $subtotal;
+        }
+
+        /** 3️⃣ Calcular cantidad total producida */
+        $totalProduced = collect($data['products'])
+            ->sum(fn ($row) => (float) $row['quantity']);
+
+        // Si por alguna razón es 0, evitamos división (no debería pasar por el Request)
+        $unitCost = $totalProduced > 0
+            ? $totalCost / $totalProduced
+            : 0;
+
+        /** 4️⃣ Registrar productos generados + aumentar stock */
+        foreach ($data['products'] as $row) {
+
+            $product  = $this->productService->getById((int) $row['product_id']);
+            $quantity = (float) $row['quantity'];
+
+            $this->productionProductRepository->create([
+                'production_id'     => $production->id,
+                'product_id'        => $product->id,
+                'quantity_produced' => $quantity,
+                'unit'              => $product->unit,
+                'cost_price'        => $unitCost, // ✅ costo real del lote
+            ]);
+
+            // 🔺 aumentar stock del producto
+            $this->productService->increaseStock($product, $quantity);
+
+
+        }
+
+        /** 5️⃣ Actualizar costo total de la producción */
+        $production->update([
+            'total_cost' => $totalCost,
+        ]);
+
+        return $production;
+    });
+}
 }

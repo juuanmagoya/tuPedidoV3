@@ -24,5 +24,6 @@ interface ProductionRepositoryInterface
     /**
      * Obtener todas las producciones
      */
-    public function all();
+
+    public function getAll();
 }
