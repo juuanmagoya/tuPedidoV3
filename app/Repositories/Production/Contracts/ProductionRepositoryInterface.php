@@ -22,6 +22,14 @@ interface ProductionRepositoryInterface
     public function update(Production $production, array $data): Production;
 
     /**
+     * Actualizar estado de una producción
+     */
+    public function updateStatus(
+        Production $production,
+        array $data
+    ): Production;
+
+    /**
      * Obtener todas las producciones
      */
 

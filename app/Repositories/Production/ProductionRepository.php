@@ -34,4 +34,12 @@ class ProductionRepository implements ProductionRepositoryInterface
         return $production;
     }
 
+    public function updateStatus(
+        Production $production,
+        array $data
+    ): Production {
+        $production->update($data);
+        return $production;
+    }
+
 }

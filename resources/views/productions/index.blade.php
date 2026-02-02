@@ -4,6 +4,11 @@
 
 @section('content')
 <div class="space-y-10 pb-24">
+@if ($errors->any())
+    <div class="text-red-500 text-sm">
+        {{ $errors->first() }}
+    </div>
+@endif
 
     <!-- HEADER -->
     <div class="flex items-center justify-between mt-10">
@@ -48,14 +53,68 @@
                             {{ $production->production_date }}
                         </td>
 
+                        {{-- Estado --}}
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded text-xs
-                                {{ $production->status === 'confirmed'
-                                    ? 'bg-green-500/20 text-green-400'
-                                    : 'bg-gray-500/20 text-gray-400' }}">
-                                {{ ucfirst($production->status) }}
-                            </span>
+                            <form 
+                                method="POST" 
+                                action="{{ route('productions.change-status', $production) }}"
+                            >
+                                @csrf
+                                @method('PATCH')
+
+                                <select
+                                    name="status"
+                                    onchange="this.form.submit()"
+                                    @if($production->status === 'cancelled') disabled @endif
+
+                                    class="
+                                        w-full rounded-md px-3 py-1.5 text-sm
+                                        border border-[#3a5168]
+                                        bg-[#3d485f]
+                                        focus:outline-none focus:ring-2
+
+                                        @if($production->status === 'draft')
+                                            text-yellow
+                                        @elseif($production->status === 'confirmed')
+                                            text-green
+                                        @elseif($production->status === 'cancelled')
+                                        text-red cursor-not-allowed opacity-70
+                                        @endif
+                                    "
+                                >
+                                    {{-- draft --}}
+                                    @if($production->status === 'draft')
+                                        <option value="draft" selected class="text-yellow-400 bg-[#0B1220]">
+                                            Borrador
+                                        </option>
+                                        <option value="confirmed" class="text-green-400 bg-[#0B1220]">
+                                            Confirmado
+                                        </option>
+                                        <option value="cancelled" class="text-red-400 bg-[#0B1220]">
+                                            Cancelado
+                                        </option>
+                                    @endif
+
+                                    {{-- confirmed --}}
+                                    @if($production->status === 'confirmed')
+                                        <option value="confirmed" selected class="text-green-400 bg-[#17243d]">
+                                            Confirmado
+                                        </option>
+                                        <option value="cancelled" class="text-red-400 bg-[#0B1220]">
+                                            Cancelado
+                                        </option>
+                                    @endif
+
+                                    {{-- cancelled --}}
+                                    @if($production->status === 'cancelled')
+                                        <option value="cancelled" selected class="text-red-400 bg-[#0B1220]">
+                                            Cancelado
+                                        </option>
+                                    @endif
+                                </select>
+                            </form>
                         </td>
+
 
                         <td class="px-6 py-4 text-right">
                             <a href="{{ route('productions.show', $production->id) }}"

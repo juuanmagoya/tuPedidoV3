@@ -7,6 +7,9 @@ use App\Http\Requests\Production\StoreProductionRequest;
 use App\Services\Production\ProductionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\DTOs\Production\ChangeProductionStatusDTO;
+use App\Http\Requests\Production\ChangeProductionStatusRequest;
+use Carbon\Carbon;
 
 
 class ProductionController extends Controller
@@ -62,5 +65,22 @@ public function store(StoreProductionRequest $request)
         return view('productions.show', [
             'production' => $this->productionService->getById($id)
         ]);
+    }
+    
+    public function changeStatus(
+        ChangeProductionStatusRequest $request,
+        int $production
+    ) {
+        $dto = new ChangeProductionStatusDTO(
+            productionId: $production,
+            newStatus: $request->validated('status'),
+        );
+
+
+        $this->productionService->changeStatus($dto);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Estado de la producción actualizado correctamente.');
     }
 }

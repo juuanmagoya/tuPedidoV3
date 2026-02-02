@@ -25,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('inputs', InputController::class);
     Route::resource('productions', ProductionController::class);
+    Route::patch('/productions/{production}/status', 
+    [ProductionController::class, 'changeStatus']
+    )->name('productions.change-status');
+
 
 });
 
