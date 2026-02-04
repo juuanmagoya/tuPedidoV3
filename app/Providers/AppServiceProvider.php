@@ -17,6 +17,9 @@ use App\Repositories\Production\Contracts\ProductionInputRepositoryInterface;
 use App\Repositories\Production\ProductionInputRepository;
 use App\Repositories\Production\Contracts\ProductionProductRepositoryInterface;
 use App\Repositories\Production\ProductionProductRepository;
+use App\Repositories\Purchase\PurchaseRepository;
+use App\Repositories\Purchase\PurchaseRepositoryInterface;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,6 +65,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
         ProductionProductRepositoryInterface::class,
         ProductionProductRepository::class
+        );
+
+        //Purchase
+        $this->app->bind(
+        PurchaseRepositoryInterface::class,
+        PurchaseRepository::class
         );
     }
 

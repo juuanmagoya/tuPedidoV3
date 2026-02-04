@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\PurchaseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/productions/{production}/status', 
     [ProductionController::class, 'changeStatus']
     )->name('productions.change-status');
+    Route::resource('purchases', PurchaseController::class);
+    Route::patch('/purchases/{purchase}/status',
+    [PurchaseController::class, 'changeStatus']
+    )->name('purchases.change-status');
 
 
 });
