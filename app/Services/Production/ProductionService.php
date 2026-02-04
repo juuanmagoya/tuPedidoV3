@@ -210,119 +210,119 @@ class ProductionService
     }
 
     public function update(int $productionId, array $data): Production
-{
-    return DB::transaction(function () use ($productionId, $data) {
+    {
+        return DB::transaction(function () use ($productionId, $data) {
 
-        /** 1️⃣ Obtener producción */
-        $production = $this->productionRepository->findById($productionId);
+            /** 1️⃣ Obtener producción */
+            $production = $this->productionRepository->findById($productionId);
 
-        /** 2️⃣ Validaciones de negocio */
-        if ($production->status === 'cancelled') {
-            throw new \DomainException(
-                'No se puede editar una producción cancelada.'
-            );
-        }
+            /** 2️⃣ Validaciones de negocio */
+            if ($production->status === 'cancelled') {
+                throw new \DomainException(
+                    'No se puede editar una producción cancelada.'
+                );
+            }
 
-        /** 3️⃣ Revertir INSUMOS consumidos (sumar stock nuevamente) */
-        $oldInputs = $this->productionInputRepository
-            ->getByProduction($production->id);
+            /** 3️⃣ Revertir INSUMOS consumidos (sumar stock nuevamente) */
+            $oldInputs = $this->productionInputRepository
+                ->getByProduction($production->id);
 
-        foreach ($oldInputs as $row) {
-            $input = $this->inputService->getById($row->inputs_id);
+            foreach ($oldInputs as $row) {
+                $input = $this->inputService->getById($row->inputs_id);
 
-            // 🔺 devolver stock
-            $this->inputService->increaseStock(
-                $input,
-                (float) $row->quantity_used
-            );
-        }
+                // 🔺 devolver stock
+                $this->inputService->increaseStock(
+                    $input,
+                    (float) $row->quantity_used
+                );
+            }
 
-        /** 4️⃣ Revertir PRODUCTOS generados (bajar stock) */
-        $oldProducts = $this->productionProductRepository
-            ->getByProduction($production->id);
+            /** 4️⃣ Revertir PRODUCTOS generados (bajar stock) */
+            $oldProducts = $this->productionProductRepository
+                ->getByProduction($production->id);
 
-        foreach ($oldProducts as $row) {
-            $product = $this->productService->getById($row->product_id);
+            foreach ($oldProducts as $row) {
+                $product = $this->productService->getById($row->product_id);
 
-            // 🔻 quitar stock
-            $this->productService->decreaseStock(
-                $product,
-                (float) $row->quantity_produced
-            );
-        }
+                // 🔻 quitar stock
+                $this->productService->decreaseStock(
+                    $product,
+                    (float) $row->quantity_produced
+                );
+            }
 
-        /** 5️⃣ Eliminar detalle anterior */
-        $this->productionInputRepository
-            ->deleteByProduction($production->id);
+            /** 5️⃣ Eliminar detalle anterior */
+            $this->productionInputRepository
+                ->deleteByProduction($production->id);
 
-        $this->productionProductRepository
-            ->deleteByProduction($production->id);
+            $this->productionProductRepository
+                ->deleteByProduction($production->id);
 
-        /** 6️⃣ Actualizar cabecera */
-        $production->update([
-            'production_date' => $data['date'],
-            'notes'           => $data['description'] ?? null,
-        ]);
-
-        $totalCost = 0;
-
-        /** 7️⃣ Registrar NUEVOS insumos */
-        foreach ($data['inputs'] as $row) {
-
-            $input = $this->inputService->getById((int) $row['inputs_id']);
-
-            $quantity  = (float) $row['quantity'];
-            $costPrice = (float) $input->cost_price;
-            $subtotal  = $quantity * $costPrice;
-
-            $this->productionInputRepository->create([
-                'production_id' => $production->id,
-                'inputs_id'     => $input->id,
-                'quantity_used' => $quantity,
-                'unit'          => $input->unit,
-                'cost_price'    => $costPrice,
-                'subtotal'      => $subtotal,
+            /** 6️⃣ Actualizar cabecera */
+            $production->update([
+                'production_date' => $data['date'],
+                'notes'           => $data['description'] ?? null,
             ]);
 
-            // 🔻 bajar stock
-            $this->inputService->decreaseStock($input, $quantity);
+            $totalCost = 0;
 
-            $totalCost += $subtotal;
-        }
+            /** 7️⃣ Registrar NUEVOS insumos */
+            foreach ($data['inputs'] as $row) {
 
-        /** 8️⃣ Calcular costo unitario */
-        $totalProduced = collect($data['products'])
-            ->sum(fn ($row) => (float) $row['quantity']);
+                $input = $this->inputService->getById((int) $row['inputs_id']);
 
-        $unitCost = $totalProduced > 0
-            ? $totalCost / $totalProduced
-            : 0;
+                $quantity  = (float) $row['quantity'];
+                $costPrice = (float) $input->cost_price;
+                $subtotal  = $quantity * $costPrice;
 
-        /** 9️⃣ Registrar NUEVOS productos */
-        foreach ($data['products'] as $row) {
+                $this->productionInputRepository->create([
+                    'production_id' => $production->id,
+                    'inputs_id'     => $input->id,
+                    'quantity_used' => $quantity,
+                    'unit'          => $input->unit,
+                    'cost_price'    => $costPrice,
+                    'subtotal'      => $subtotal,
+                ]);
 
-            $product  = $this->productService->getById((int) $row['product_id']);
-            $quantity = (float) $row['quantity'];
+                // 🔻 bajar stock
+                $this->inputService->decreaseStock($input, $quantity);
 
-            $this->productionProductRepository->create([
-                'production_id'     => $production->id,
-                'product_id'        => $product->id,
-                'quantity_produced' => $quantity,
-                'unit'              => $product->unit,
-                'cost_price'        => $unitCost,
+                $totalCost += $subtotal;
+            }
+
+            /** 8️⃣ Calcular costo unitario */
+            $totalProduced = collect($data['products'])
+                ->sum(fn ($row) => (float) $row['quantity']);
+
+            $unitCost = $totalProduced > 0
+                ? $totalCost / $totalProduced
+                : 0;
+
+            /** 9️⃣ Registrar NUEVOS productos */
+            foreach ($data['products'] as $row) {
+
+                $product  = $this->productService->getById((int) $row['product_id']);
+                $quantity = (float) $row['quantity'];
+
+                $this->productionProductRepository->create([
+                    'production_id'     => $production->id,
+                    'product_id'        => $product->id,
+                    'quantity_produced' => $quantity,
+                    'unit'              => $product->unit,
+                    'cost_price'        => $unitCost,
+                ]);
+
+                // 🔺 aumentar stock
+                $this->productService->increaseStock($product, $quantity);
+            }
+
+            /** 🔟 Actualizar costo total */
+            $production->update([
+                'total_cost' => $totalCost,
             ]);
 
-            // 🔺 aumentar stock
-            $this->productService->increaseStock($product, $quantity);
-        }
-
-        /** 🔟 Actualizar costo total */
-        $production->update([
-            'total_cost' => $totalCost,
-        ]);
-
-        return $production;
-    });
-}
+            return $production;
+        });
+    }
 
 }
