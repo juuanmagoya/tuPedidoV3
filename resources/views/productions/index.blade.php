@@ -26,6 +26,66 @@
         </a>
     </div>
 
+    <form method="GET" class="bg-[#111827] border border-[#1F2933] rounded-xl p-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+
+            <!-- Estado -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-1">Estado</label>
+                <select
+                    name="status"
+                    class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-3 py-2 text-white"
+                >
+                    <option value="">Todos</option>
+                    <option value="draft" @selected(request('status') === 'draft')>Borrador</option>
+                    <option value="confirmed" @selected(request('status') === 'confirmed')>Confirmada</option>
+                    <option value="cancelled" @selected(request('status') === 'cancelled')>Cancelada</option>
+                </select>
+            </div>
+
+            <!-- Desde -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-1">Desde</label>
+                <input
+                    type="date"
+                    name="from"
+                    value="{{ request('from') }}"
+                    class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-3 py-2 text-white"
+                    style="color-scheme: dark;"
+                >
+            </div>
+
+            <!-- Hasta -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-1">Hasta</label>
+                <input
+                    type="date"
+                    name="to"
+                    value="{{ request('to') }}"
+                    class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-3 py-2 text-white"
+                    style="color-scheme: dark;"
+                >
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex gap-2">
+                <button
+                    type="submit"
+                    class="bg-[#F59E0B] hover:bg-[#FBBF24] text-black px-4 py-2 rounded-lg font-semibold"
+                >
+                    Filtrar
+                </button>
+
+                <a
+                    href="{{ route('productions.index') }}"
+                    class="px-4 py-2 border border-[#1F2933] rounded-lg text-gray-300 hover:bg-[#0B1220]"
+                >
+                    Limpiar
+                </a>
+            </div>
+        </div>
+    </form>
+
     <!-- TABLA -->
     <div class="bg-[#111827] border border-[#1F2933]
                 rounded-2xl overflow-hidden shadow-lg">
@@ -117,8 +177,15 @@
 
 
                         <td class="px-6 py-4 text-right">
+                            @if($production->status !== 'cancelled')
+                                <a href="{{ route('productions.edit', $production->id) }}"
+                                class="text-blue-400 hover:text-blue-300 text-sm mr-3">
+                                    Editar
+                                </a>
+                            @endif
+
                             <a href="{{ route('productions.show', $production->id) }}"
-                               class="text-[#F59E0B] hover:text-[#FBBF24] text-sm">
+                            class="text-[#F59E0B] hover:text-[#FBBF24] text-sm">
                                 Ver detalle
                             </a>
                         </td>

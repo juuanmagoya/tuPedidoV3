@@ -38,4 +38,14 @@ class ProductionInputRepository implements ProductionInputRepositoryInterface
             ->get()
             ->toArray();
     }
+
+    public function getByProduction(int $productionId)
+    {
+        return ProductionInput::where('production_id', $productionId)->get();
+    }
+
+    public function deleteByProduction(int $productionId): void
+    {
+        ProductionInput::where('production_id', $productionId)->delete();
+    }
 }

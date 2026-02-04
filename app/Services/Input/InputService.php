@@ -94,5 +94,14 @@ class InputService
         $input->decrement('stock', $quantity);
     }
 
+    /**
+     * 🔺 Aumentar stock de un insumo (Production, Compra)
+     */
+    public function increaseStock($input, float $quantity): void
+    {
+        $input->increment('stock', $quantity);
+    }
+
+
 
 }

@@ -20,4 +20,15 @@ interface ProductionProductRepositoryInterface
      * Obtener los productos generados por una producción
      */
     public function findByProduction(int $productionId): array;
+
+    /**
+     * Obtener los productos generados por una producción
+     */
+    public function getByProduction(int $productionId);
+
+    /**
+     * Eliminar los productos generados por una producción
+     */
+    public function deleteByProduction(int $productionId): void;
+
 }

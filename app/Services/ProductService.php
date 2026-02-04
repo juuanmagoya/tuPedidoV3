@@ -122,6 +122,15 @@ class ProductService
     {
         $product->increment('stock', $quantity);
     }
+
+    /**
+     * Disminuir stock de un producto
+     */
+    public function decreaseStock($product, float $quantity): void
+    {
+        $product->decrement('stock', $quantity);
+    }
+
     
 
 }

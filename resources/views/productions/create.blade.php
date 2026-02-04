@@ -88,7 +88,7 @@
                         <!-- Insumo -->
                         <div class="col-span-7">
                             <select
-                                :name="`inputs[${index}][input_id]`"
+                                :name="`inputs[${index}][inputs_id]`"
                                 required
                                 class="w-full bg-[#0B1220] border border-[#1F2933]
                                        rounded-lg px-3 py-2 text-white"

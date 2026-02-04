@@ -21,4 +21,15 @@ interface ProductionInputRepositoryInterface
      * Obtener los inputs de una producción
      */
     public function findByProduction(int $productionId): array;
+
+    /**
+     * Obtener los inputs de una producción (modelo)
+     */
+    public function getByProduction(int $productionId);
+
+    /**
+     * Eliminar los inputs de una producción
+     */
+    public function deleteByProduction(int $productionId): void;
+
 }

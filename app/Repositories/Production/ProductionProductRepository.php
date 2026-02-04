@@ -34,4 +34,14 @@ class ProductionProductRepository implements ProductionProductRepositoryInterfac
     {
         return ProductionProduct::where('production_id', $productionId)->get()->toArray();
     }
+    
+    public function getByProduction(int $productionId)
+    {
+        return ProductionProduct::where('production_id', $productionId)->get();
+    }
+
+    public function deleteByProduction(int $productionId): void
+    {
+        ProductionProduct::where('production_id', $productionId)->delete();
+    }
 }
