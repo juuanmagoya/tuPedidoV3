@@ -6,6 +6,7 @@ class PurchaseItemDTO
 {
     public function __construct(
         public readonly int $input_id,
+        public readonly string $unit,
         public readonly float $quantity,
         public readonly float $unit_price,
     ) {}
@@ -14,6 +15,7 @@ class PurchaseItemDTO
     {
         return new self(
             input_id: $data['input_id'],
+            unit: $data['unit'],
             quantity: $data['quantity'],
             unit_price: $data['unit_price']
         );

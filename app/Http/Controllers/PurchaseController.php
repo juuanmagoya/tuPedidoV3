@@ -8,6 +8,10 @@ use App\Http\Requests\Purchase\ChangePurchaseStatusRequest;
 use App\Models\Purchase;
 use App\Services\Purchase\PurchaseService;
 use DomainException;
+use App\Models\Supplier;
+use App\Models\Input;
+use App\Http\Requests\Purchase\UpdatePurchaseRequest;
+use App\DTOs\Purchase\PurchaseUpdateDTO;
 
 class PurchaseController extends Controller
 {
@@ -18,14 +22,45 @@ class PurchaseController extends Controller
     /**
      * Listado de compras
      */
+
     public function index()
     {
-        $purchases = Purchase::with(['supplier', 'items.input'])
-            ->latest()
+        $query = Purchase::with(['supplier', 'items.input']);
+
+        // Filtro por estado
+        if (request()->filled('status')) {
+            $query->where('status', request('status'));
+        }
+
+        // Filtro desde fecha
+        if (request()->filled('from')) {
+            $query->whereDate('purchase_date', '>=', request('from'));
+        }
+
+        // Filtro hasta fecha
+        if (request()->filled('to')) {
+            $query->whereDate('purchase_date', '<=', request('to'));
+        }
+
+        $purchases = $query
+            ->latest('purchase_date')
             ->get();
 
         return view('purchases.index', compact('purchases'));
     }
+
+
+    /**
+     * Formulario de creación de compra
+     */
+    public function create()
+    {
+        $suppliers = Supplier::orderBy('name')->get();
+        $inputs    = Input::orderBy('name')->get();
+
+        return view('purchases.create', compact('suppliers', 'inputs'));
+    }
+
 
     /**
      * Crear compra
@@ -49,15 +84,45 @@ class PurchaseController extends Controller
         }
     }
 
-    /**
+
+        /**
      * Ver detalle de una compra
      */
     public function show(Purchase $purchase)
     {
-        $purchase->load(['supplier', 'items.input']);
+        $purchase->load([
+            'supplier',
+            'items.input',
+        ]);
 
-        return view('purchases.show', compact('purchase'));
+        return view('purchases.show', [
+            'purchase' => $purchase,
+        ]);
     }
+
+    /**
+     * Formulario de edición de compra
+     */
+    public function edit(Purchase $purchase)
+    {
+        if (! in_array($purchase->status, ['pending', 'approved'])) {
+            return redirect()
+                ->route('purchases.show', $purchase)
+                ->with('error', 'Esta compra no se puede editar en su estado actual.');
+        }
+
+        $suppliers = Supplier::orderBy('name')->get();
+        $inputs = Input::orderBy('name')->get();
+
+        return view('purchases.edit', compact(
+            'purchase',
+            'suppliers',
+            'inputs'
+        ));
+    }
+
+
+
 
     /**
      * Actualizar compra
@@ -112,18 +177,18 @@ class PurchaseController extends Controller
      * Cancelar compra
      */
     public function cancel(Purchase $purchase)
-    {
-        try {
-            $this->purchaseService->cancel($purchase);
+{
+    try {
+        $this->purchaseService->cancel($purchase);
 
-            return redirect()
-                ->back()
-                ->with('success', 'Compra cancelada correctamente.');
+        return redirect()
+            ->back()
+            ->with('success', 'Compra cancelada correctamente.');
 
-        } catch (DomainException $e) {
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage());
-        }
+    } catch (DomainException $e) {
+        return redirect()
+            ->back()
+            ->with('error', $e->getMessage());
     }
+}
 }

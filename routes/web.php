@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/purchases/{purchase}/status',
     [PurchaseController::class, 'changeStatus']
     )->name('purchases.change-status');
+    Route::patch(
+    '/purchases/{purchase}/cancel',
+    [PurchaseController::class, 'cancel']
+    )->name('purchases.cancel');
 
 
 });

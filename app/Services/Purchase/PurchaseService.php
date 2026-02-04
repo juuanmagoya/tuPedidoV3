@@ -43,6 +43,7 @@ class PurchaseService
         });
     }
 
+
     /**
      * Actualizar compra (revertir stock + aplicar nuevo)
      */
@@ -56,11 +57,7 @@ class PurchaseService
 
             // 🔻 Revertimos stock anterior
             foreach ($purchase->items as $item) {
-                $input = Input::find($item->input_id);
-
-                if (! $input) {
-                    throw new DomainException('Insumo no encontrado.');
-                }
+                $input = Input::findOrFail($item->input_id);
 
                 $this->inputService->decreaseStock(
                     $input,
@@ -68,16 +65,12 @@ class PurchaseService
                 );
             }
 
-            // 🔄 Actualizamos compra
+            // 🔄 Actualizamos compra + items
             $updatedPurchase = $this->purchaseRepository->update($purchase, $dto);
 
             // 🔺 Aplicamos nuevo stock
             foreach ($updatedPurchase->items as $item) {
-                $input = Input::find($item->input_id);
-
-                if (! $input) {
-                    throw new DomainException('Insumo no encontrado.');
-                }
+                $input = Input::findOrFail($item->input_id);
 
                 $this->inputService->increaseStock(
                     $input,
@@ -88,6 +81,7 @@ class PurchaseService
             return $updatedPurchase;
         });
     }
+
 
     /**
      * Cambiar estado (solo informativo)

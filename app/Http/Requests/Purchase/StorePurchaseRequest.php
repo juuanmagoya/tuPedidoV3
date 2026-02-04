@@ -19,10 +19,13 @@ class StorePurchaseRequest extends FormRequest
             'items'                  => ['required', 'array', 'min:1'],
 
             'items.*.input_id'       => ['required', 'exists:inputs,id'],
+            'items.*.unit'           => ['required', 'string', 'max:20'],
             'items.*.quantity'       => ['required', 'numeric', 'min:0.01'],
             'items.*.unit_price'     => ['required', 'numeric', 'min:0'],
         ];
     }
+
+    
 
     public function messages(): array
     {
@@ -32,6 +35,8 @@ class StorePurchaseRequest extends FormRequest
 
             'purchase_date.required'      => 'La fecha de compra es obligatoria.',
             'purchase_date.date'          => 'La fecha de compra no es válida.',
+
+            'items.*.unit.required'       => 'La unidad es obligatoria.',
 
             'items.required'              => 'Debe agregar al menos un insumo.',
             'items.array'                 => 'El formato de los insumos no es válido.',
