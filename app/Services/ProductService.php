@@ -7,114 +7,67 @@ use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 
 class ProductService
 {
-    /**
-     * Tiempo de vida del cache (en minutos)
-     */
-    private int $cacheTtl = 10;
-
     public function __construct(
         protected ProductRepositoryInterface $productRepository
     ) {}
 
     /**
-     * Obtener todos los productos (cacheado)
+     * Obtener todos los productos
      */
     public function getAll(): Collection
     {
-        return Cache::remember(
-            'products.all',
-            now()->addMinutes($this->cacheTtl),
-            fn () => $this->productRepository->all()
-        );
+        return $this->productRepository->all();
     }
 
     /**
-     * Crear un producto y limpiar caché relacionada
+     * Buscar productos con filtros
+     */
+    public function search(array $filters = []): LengthAwarePaginator
+    {
+        return $this->productRepository->search($filters);
+    }
+
+    /**
+     * Crear un producto
      */
     public function store(ProductDTO $dto): Product
     {
-        $product = $this->productRepository->create($dto);
-
-        $this->clearCache();
-
-        return $product;
+        return $this->productRepository->create($dto);
     }
 
     /**
-     * Actualizar un producto y limpiar caché relacionada
+     * Actualizar un producto
      */
     public function update(Product $product, ProductDTO $dto): Product
     {
-        $updated = $this->productRepository->update($product, $dto);
-
-        $this->clearCache();
-
-        return $updated;
+        return $this->productRepository->update($product, $dto);
     }
 
     /**
-     * Eliminar un producto y limpiar caché relacionada
+     * Eliminar un producto
      */
     public function delete(Product $product): void
     {
         $this->productRepository->delete($product);
-
-        $this->clearCache();
     }
 
     /**
-     * Buscar productos con filtros (cacheado por combinación de filtros)
+     * Obtener producto por ID
      */
-    public function search(array $filters = []): LengthAwarePaginator
-    {
-        $page = request()->get('page', 1);
-
-        $cacheKey = $this->makeSearchCacheKey($filters, $page);
-
-        return Cache::remember(
-            $cacheKey,
-            now()->addMinutes($this->cacheTtl),
-            fn () => $this->productRepository->search($filters)
-        );
-    }
-
-    /**
-     * Genera una clave única de caché según los filtros aplicados
-     */
-    protected function makeSearchCacheKey(array $filters, int $page): string
-    {
-        return 'products.search.'
-            . md5(json_encode($filters))
-            . '.page.' . $page;
-    }
-
-
-    /**
-     * Limpia toda la caché relacionada a productos
-     */
-    private function clearCache(): void
-    {
-        Cache::forget('products.all');
-
-        // Si usás Redis o Memcached podrías usar tags
-        // Cache::tags('products')->flush();
-    }
-    
     public function getById(int $id): Product
     {
-        $product = Product::find($id);
+        $product = $this->productRepository->find($id);
 
-        if (!$product) {
+        if (! $product) {
             throw new \Exception('Producto no encontrado');
         }
 
         return $product;
     }
-    
+
     /**
      * Aumentar stock de un producto
      */
@@ -126,11 +79,8 @@ class ProductService
     /**
      * Disminuir stock de un producto
      */
-    public function decreaseStock($product, float $quantity): void
+    public function decreaseStock(Product $product, float $quantity): void
     {
         $product->decrement('stock', $quantity);
     }
-
-    
-
 }

@@ -13,6 +13,8 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+
 </head>
 
 <body 
@@ -107,5 +109,8 @@ document.addEventListener('alpine:init', () => {
 </div>
     {{-- 🔥 CONFIRM MODAL GLOBAL --}}
     @include('partials.confirm-modal')
+
+    @livewireScripts
 </body>
 </html>
+

@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,13 @@ Route::middleware('auth')->group(function () {
     '/purchases/{purchase}/cancel',
     [PurchaseController::class, 'cancel']
     )->name('purchases.cancel');
+    Route::resource('orders', OrderController::class);
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])
+    ->name('orders.cancel');
+    Route::patch('/orders/{order}/change-status',[OrderController::class, 'changeStatus']
+    )->name('orders.change-status');
+
+
 
 
 });

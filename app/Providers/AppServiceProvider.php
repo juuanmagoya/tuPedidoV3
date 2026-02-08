@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\CategoryRepository;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
@@ -19,6 +20,8 @@ use App\Repositories\Production\Contracts\ProductionProductRepositoryInterface;
 use App\Repositories\Production\ProductionProductRepository;
 use App\Repositories\Purchase\PurchaseRepository;
 use App\Repositories\Purchase\PurchaseRepositoryInterface;
+use App\Repositories\Order\OrderRepository;
+use App\Repositories\Order\OrderRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -71,6 +74,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
         PurchaseRepositoryInterface::class,
         PurchaseRepository::class
+        );
+
+        //Order
+        $this->app->bind(
+            OrderRepositoryInterface::class,
+            OrderRepository::class
         );
     }
 

@@ -28,10 +28,10 @@ class Order extends Model
      * Relación con el cliente
      * Un pedido puede pertenecer a un cliente
      */
-    /*public function customer()
+    public function customer()
     {
         return $this->belongsTo(Customer::class);
-    } */
+    }
 
     /**
      * Relación con los productos del pedido
@@ -41,5 +41,19 @@ class Order extends Model
     {
         return $this->hasMany(OrderProduct::class);
     }
+
+    public function canBeEdited(): bool
+    {
+        return in_array($this->status, [
+            'received',
+            'preparing',
+        ]);
+    }
+    /*public function items()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }*/
+    
+
 
 }
