@@ -110,7 +110,7 @@
                 <p class="text-xs text-yellow-500 mb-2 tracking-wider">ADMINISTRACIÓN</p>
 
                 <nav class="space-y-2">
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                    <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
                         <span>Usuarios</span>
                     </a>
                 </nav>

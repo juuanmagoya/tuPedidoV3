@@ -12,6 +12,36 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    
+    // =========================
+    // ROLES
+    // =========================
+    const ROLE_ADMIN = 'admin';
+    const ROLE_PRODUCTION = 'production_manager';
+    const ROLE_PURCHASE = 'purchase_manager';
+
+    // ============================
+    // LABELS (ESPAÑOL)
+    // ============================
+    public const ROLE_LABELS = [
+        self::ROLE_ADMIN      => 'Administrador',
+        self::ROLE_PRODUCTION => 'Producción',
+        self::ROLE_PURCHASE   => 'Compras',
+    ];
+
+    // =========================
+    // STATUSES
+    // =========================
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+    const STATUS_PENDING = 'pending';
+
+    public const STATUS_LABELS = [
+        self::STATUS_ACTIVE   => 'Activo',
+        self::STATUS_INACTIVE => 'Inactivo',
+        self::STATUS_PENDING  => 'Pendiente',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,13 +55,6 @@ class User extends Authenticatable
         'status',
     ];
 
-    const ROLE_ADMIN = 'admin';
-    const ROLE_PRODUCTION = 'production_manager';
-    const ROLE_PURCHASE = 'purchase_manager';
-
-    const STATUS_ACTIVE = 'active';
-    const STATUS_INACTIVE = 'inactive';
-    const STATUS_PENDING = 'pending';
 
 
     /**
