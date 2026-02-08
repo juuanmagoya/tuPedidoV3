@@ -178,6 +178,16 @@
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-4">
 
+                        <a
+                            href="{{ route('orders.invoice', $order) }}"
+                            class="px-3 py-1 bg-[#1F2933] hover:bg-[#374151]
+                                text-gray-200 rounded text-sm border border-gray-600"
+                        >
+                            Factura
+                        </a>
+
+
+
                         {{-- EDITAR --}}
                         @if($order->canBeEdited())
                             <a

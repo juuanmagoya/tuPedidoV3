@@ -1,10 +1,14 @@
+@php
+    use App\Models\User;
+    $user = Auth::user();
+@endphp
+
 <nav x-data="{ open: false }">
 
     <!-- TOPBAR MOBILE -->
     <header
         class="h-16 bg-gray-900 border-b border-gray-800 flex items-center px-4 sm:hidden fixed top-0 left-0 right-0 z-20">
         <button @click="open = true" class="text-yellow-400 focus:outline-none">
-            <!-- Hamburger -->
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M4 6h16M4 12h16M4 18h16" />
@@ -32,9 +36,9 @@
 
         <!-- LOGO -->
         <div class="h-20 flex items-center justify-center border-b border-gray-800">
-           <img src="{{ asset('storage/LogoTuPedido.png') }}" 
-                alt="Logo TuPedido" 
-                class="ml-4 h-16 w-auto md:h-20 lg:h-24">
+            <img src="{{ asset('storage/LogoTuPedido.png') }}"
+                 alt="Logo TuPedido"
+                 class="ml-4 h-16 w-auto md:h-20 lg:h-24">
         </div>
 
         <!-- MENU -->
@@ -42,13 +46,10 @@
 
             <!-- PRINCIPAL -->
             <div>
-                <p class="text-xs text-yellow-500 mb-2 tracking-wider">
-                    PRINCIPAL
-                </p>
+                <p class="text-xs text-yellow-500 mb-2 tracking-wider">PRINCIPAL</p>
 
                 <a href="{{ route('dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2 rounded bg-yellow-500 text-black font-semibold">
-                    <!-- Dashboard Icon -->
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 12l9-9 9 9v9a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H3z"/>
@@ -57,111 +58,74 @@
                 </a>
             </div>
 
-            <!-- PRODUCCIÓN -->
+            {{-- ===================== PRODUCCIÓN ===================== --}}
+            @if(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PRODUCTION]))
             <div>
-                <p class="text-xs text-yellow-500 mb-2 tracking-wider">
-                    PRODUCCIÓN
-                </p>
-                
+                <p class="text-xs text-yellow-500 mb-2 tracking-wider">PRODUCCIÓN</p>
+
                 <nav class="space-y-2">
-                    <!-- Insumos -->
                     <a href="{{ route('inputs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0l-8 5-8-5m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6"/>
-                        </svg>
-                        Insumos
+                        <span>Insumos</span>
                     </a>
 
-                    <!-- Producción -->
                     <a href="{{ route('productions.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M11.983 4.5a1.5 1.5 0 012.034 0l.42.378a1.5 1.5 0 001.957.07l.47-.383a1.5 1.5 0 012.121.185l.354.42a1.5 1.5 0 00.987.524l.546.07a1.5 1.5 0 011.3 1.716l-.07.546a1.5 1.5 0 00.524.987l.42.354a1.5 1.5 0 01.185 2.121l-.383.47a1.5 1.5 0 00.07 1.957l.378.42a1.5 1.5 0 010 2.034l-.378.42a1.5 1.5 0 00-.07 1.957l.383.47a1.5 1.5 0 01-.185 2.121l-.42.354a1.5 1.5 0 00-.524.987l-.07.546a1.5 1.5 0 01-1.716 1.3l-.546-.07a1.5 1.5 0 00-.987.524l-.354.42a1.5 1.5 0 01-2.121.185l-.47-.383a1.5 1.5 0 00-1.957.07l-.42.378a1.5 1.5 0 01-2.034 0l-.42-.378a1.5 1.5 0 00-1.957-.07l-.47.383a1.5 1.5 0 01-2.121-.185l-.354-.42a1.5 1.5 0 00-.987-.524l-.546-.07a1.5 1.5 0 01-1.3-1.716l.07-.546a1.5 1.5 0 00-.524-.987l-.42-.354a1.5 1.5 0 01-.185-2.121l.383-.47a1.5 1.5 0 00-.07-1.957l-.378-.42a1.5 1.5 0 010-2.034l.378-.42a1.5 1.5 0 00.07-1.957l-.383-.47a1.5 1.5 0 01.185-2.121l.42-.354a1.5 1.5 0 00.524-.987l.07-.546a1.5 1.5 0 011.716-1.3l.546.07a1.5 1.5 0 00.987-.524l.354-.42a1.5 1.5 0 012.121-.185l.47.383a1.5 1.5 0 001.957-.07l.42-.378z"/>
-                        </svg>
-                        Producción
+                        <span>Producción</span>
                     </a>
-                </nav>
-            </div>
 
-            <!-- GESTIÓN -->
-            <div>
-                <p class="text-xs text-yellow-500 mb-2 tracking-wider">
-                    GESTIÓN
-                </p>
-
-                <nav class="space-y-2">
-                    <!-- Categorías -->
                     <a href="{{ route('categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 7h18M3 12h18M3 17h18"/>
-                        </svg>
-                        Categorías
+                        <span>Categorías</span>
                     </a>
 
-                    <!-- Productos -->
                     <a href="{{ route('products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M20 7l-8-4-8 4v10l8 4 8-4V7z"/>
-                        </svg>
-                        Productos
-                    </a>
-
-                    <!-- Usuarios -->
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        Usuarios
-                    </a>
-
-                    <!-- Proveedores -->
-                    <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
-                        </svg>
-                        Proveedores
+                        <span>Productos</span>
                     </a>
                 </nav>
             </div>
+            @endif
 
-            <!-- TRANSACCIONES -->
+            {{-- ===================== COMPRAS ===================== --}}
+            @if(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PURCHASE]))
             <div>
-                <p class="text-xs text-yellow-500 mb-2 tracking-wider">
-                    TRANSACCIONES
-                </p>
+                <p class="text-xs text-yellow-500 mb-2 tracking-wider">COMPRAS</p>
 
                 <nav class="space-y-2">
-                    <!-- Compras -->
-                    <a href="{{ route('purchases.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 17v-6h6v6m4 4H5a2 2 0 01-2-2V5a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z"/>
-                        </svg>
-                        Compras
+                    <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <span>Proveedores</span>
                     </a>
 
-                    <!-- Pedidos -->
+                    <a href="{{ route('purchases.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <span>Compras</span>
+                    </a>
+
                     <a href="{{ route('orders.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
-                        </svg>
-                        Pedidos
+                        <span>Pedidos</span>
                     </a>
                 </nav>
             </div>
+            @endif
+
+            {{-- ===================== ADMIN ===================== --}}
+            @if($user->role === User::ROLE_ADMIN)
+            <div>
+                <p class="text-xs text-yellow-500 mb-2 tracking-wider">ADMINISTRACIÓN</p>
+
+                <nav class="space-y-2">
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <span>Usuarios</span>
+                    </a>
+                </nav>
+            </div>
+            @endif
 
         </div>
 
         <!-- USER -->
         <div class="border-t border-gray-800 p-4 text-sm">
-            <p class="font-semibold">{{ Auth::user()->name }}</p>
-            <p class="text-xs text-yellow-500">Administrador</p>
+            <p class="font-semibold">{{ $user->name }}</p>
+
+            <p class="text-xs text-yellow-500 capitalize">
+                {{ str_replace('_', ' ', $user->role) }}
+            </p>
 
             <a href="{{ route('profile.edit') }}" class="block mt-2 hover:underline">
                 Perfil
@@ -176,5 +140,4 @@
         </div>
 
     </aside>
-
 </nav>

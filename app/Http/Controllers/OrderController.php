@@ -13,6 +13,7 @@ use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Models\Customer;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class OrderController extends Controller
@@ -143,4 +144,19 @@ class OrderController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function invoice(Order $order)
+    {
+        $order->load([
+            'products.product',
+            'customer'
+        ]);
+
+        $pdf = Pdf::loadView('orders.invoice-pdf', [
+            'order' => $order
+        ]);
+
+        return $pdf->stream("factura-pedido-{$order->id}.pdf");
+    }
+
 }
