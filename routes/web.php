@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,13 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/dashboard', function () {
+    //return view('dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 Route::resource('users', UserController::class);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------

@@ -100,6 +100,10 @@
                     <a href="{{ route('orders.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
                         <span>Pedidos</span>
                     </a>
+
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <span>Ventas</span>
+                    </a>
                 </nav>
             </div>
             @endif
