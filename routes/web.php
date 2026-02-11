@@ -11,6 +11,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,9 @@ Route::middleware(['auth', 'role:purchase_manager'])->group(function () {
 
     Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])
     ->name('orders.invoice');
+
+    Route::resource('sales', SaleController::class)
+    ->only(['index', 'show']);
 
 });
 

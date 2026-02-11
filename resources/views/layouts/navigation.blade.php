@@ -101,7 +101,7 @@
                         <span>Pedidos</span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                    <a href="{{ route('sales.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
                         <span>Ventas</span>
                     </a>
                 </nav>

@@ -49,10 +49,11 @@ class Order extends Model
             'preparing',
         ]);
     }
-    /*public function items()
+    public function sale()
     {
-        return $this->hasMany(OrderProduct::class);
-    }*/
+        return $this->hasOne(Sale::class);
+    }
+
     
 
 

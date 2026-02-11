@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Order;
+use App\Observers\OrderObserver;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\CategoryRepository;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
@@ -85,6 +86,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Order::observe(OrderObserver::class);
     }
 }
