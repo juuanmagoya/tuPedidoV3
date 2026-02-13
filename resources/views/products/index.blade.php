@@ -121,12 +121,51 @@
                             </span>
                         </td>
 
-                        <td class="px-6 py-4 text-center">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold
-                                {{ $product->status ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400' }}">
-                                {{ $product->status ? 'Activo' : 'Inactivo' }}
-                            </span>
+
+                        <td class="px-6 py-4">
+                            <form
+                                method="POST"
+                                action="{{ route('products.change-status', $product) }}"
+                            >
+                                @csrf
+                                @method('PATCH')
+
+                                <select
+                                    name="status"
+                                    onchange="this.form.submit()"
+                                    class="w-full rounded-md px-3 py-1.5 text-sm
+                                        border border-[#3a5168] bg-[#3d485f] text-white"
+                                >
+
+                                    @foreach(\App\Models\Product::STATUS_LABELS as $value => $label)
+
+                                        @if(
+                                            $product->status === $value ||
+
+                                            ($product->status === 'inactive' && $value === 'active') ||
+
+                                            ($product->status === 'active' && in_array($value, ['promotion', 'featured'])) ||
+
+                                            ($product->status === 'promotion' && $value === 'out_of_stock') ||
+
+                                            ($product->status === 'featured' && $value === 'out_of_stock') ||
+
+                                            ($product->status === 'out_of_stock' && $value === 'inactive')
+                                        )
+                                            <option
+                                                value="{{ $value }}"
+                                                @selected($product->status === $value)
+                                            >
+                                                {{ $label }}
+                                            </option>
+                                        @endif
+
+                                    @endforeach
+
+                                </select>
+                            </form>
                         </td>
+
 
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-4">

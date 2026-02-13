@@ -10,6 +10,7 @@ use App\Repositories\Order\OrderRepositoryInterface;
 use App\Services\ProductService;
 use DomainException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use App\Models\Customer;
 
 
@@ -50,9 +51,9 @@ class OrderService
                     ->findOrFail($productDTO->productId);
 
                 if ($product->stock < $productDTO->quantity) {
-                    throw new \DomainException(
-                        "Stock insuficiente para {$product->name}"
-                    );
+                throw ValidationException::withMessages([
+                    'stock' => "Stock insuficiente para {$product->name}"
+                    ]);
                 }
             }
 

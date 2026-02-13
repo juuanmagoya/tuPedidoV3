@@ -197,7 +197,8 @@
                                         value="{{ $product->id }}"
                                         data-price="{{ $product->price }}"
                                     >
-                                        {{ $product->name }}
+                                        {{ $product->name }} -- stock:
+                                        {{ $product ->stock}}
                                     </option>
                                 @endforeach
                             </select>

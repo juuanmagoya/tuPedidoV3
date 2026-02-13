@@ -2,6 +2,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Product;
 
 class StoreProductRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class StoreProductRequest extends FormRequest
             'stock' => 'nullable|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
             'unit' => 'nullable|string|max:50',
-            'status' => 'required|boolean',
+            'status' => 'nullable|in:' . implode(',', array_keys(Product::STATUS_LABELS)),
             'category_id' => 'required|exists:categories,id',
         ];
     }

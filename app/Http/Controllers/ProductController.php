@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use domainException;
 
 //Las Validaciones las hacemos en el Request
 
@@ -56,14 +57,19 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-        
-        $dto = ProductDTO::fromRequest($request->all(), $product->image);
+        $dto = ProductDTO::fromRequest(
+            $request->validated(), 
+            $product->image,
+            $product->status    
+        );
+
         $this->productService->update($product, $dto);
 
         return redirect()
-        ->route('products.index')
-        ->with('success', 'Producto actualizado correctamente');
+            ->route('products.index')
+            ->with('success', 'Producto actualizado correctamente');
     }
+
 
     public function destroy(Product $product)
     {
@@ -72,6 +78,27 @@ class ProductController extends Controller
         Cache::forget('products.index');
 
         return redirect()->back()->with('success', 'Producto eliminado correctamente');
+    }
+
+    public function changeStatus(Request $request, Product $product)
+    {
+        $request->validate([
+            'status' => 'required|string|in:' . implode(',', array_keys(Product::STATUS_LABELS)),
+        ]);
+
+        try {
+            $this->productService->changeStatus($product, $request->status);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Estado actualizado correctamente.');
+
+        } catch (DomainException $e) {
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+        }
     }
 }
 

@@ -7,6 +7,21 @@ use App\Models\Category;
 
 class Product extends Model
 {
+
+    const STATUS_INACTIVE = 'inactive';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_PROMOTION = 'promotion';
+    const STATUS_FEATURED = 'featured';
+    const STATUS_OUT_OF_STOCK = 'out_of_stock';
+
+    const STATUS_LABELS = [
+        self::STATUS_INACTIVE => 'Inactivo',
+        self::STATUS_ACTIVE => 'Activo',
+        self::STATUS_PROMOTION => 'En promoción',
+        self::STATUS_FEATURED => 'Destacado',
+        self::STATUS_OUT_OF_STOCK => 'Agotado',
+    ];
+
     use HasFactory;
 
     protected $fillable = [
@@ -26,7 +41,6 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'cost_price' => 'decimal:2',
-        'status' => 'boolean',
     ];
 
     /* =====================

@@ -54,4 +54,12 @@ class ProductRepository implements ProductRepositoryInterface
         return $query->paginate(15)->withQueryString();
     }
 
+        public function updateStatus(Product $product, string $status): Product
+    {
+        $product->status = $status;
+        $product->save();
+
+        return $product;
+    }
+
 }

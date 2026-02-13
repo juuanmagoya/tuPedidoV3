@@ -19,4 +19,6 @@ interface ProductRepositoryInterface
     public function update(Product $product, ProductDTO $dto): Product;
 
     public function delete(Product $product): void;
+
+    public function updateStatus(Product $product, string $status): Product;
 }

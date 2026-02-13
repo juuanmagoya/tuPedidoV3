@@ -68,6 +68,10 @@ Route::middleware(['auth', 'role:production_manager'])->group(function () {
         '/productions/{production}/status',
         [ProductionController::class, 'changeStatus']
     )->name('productions.change-status');
+    Route::patch('products/{product}/change-status', 
+    [ProductController::class, 'changeStatus']
+    )->name('products.change-status');
+
 
 });
 

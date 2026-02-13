@@ -24,8 +24,8 @@ class UpdateProductRequest extends FormRequest
             'stock' => 'nullable|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
             'unit' => 'nullable|string|max:50',
-            'status' => 'required|boolean',
             'category_id' => 'required|exists:categories,id',
         ];
     }
+
 }

@@ -7,6 +7,7 @@ use App\Models\Input;
 use App\Repositories\Input\InputRepositoryInterface;
 use Illuminate\Support\Collection;
 use RuntimeException;
+use Illuminate\Validation\ValidationException;
 
 class InputService
 {
@@ -88,7 +89,9 @@ class InputService
     public function decreaseStock(Input $input, float $quantity): void
     {
         if ($input->stock < $quantity) {
-            throw new \Exception("Stock insuficiente para el insumo {$input->name}");
+            throw ValidationException::withMessages([
+                'stock' => "Stock insuficiente para el insumo {$input->name}"
+            ]);
         }
 
         $input->decrement('stock', $quantity);

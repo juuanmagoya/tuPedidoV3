@@ -96,19 +96,7 @@
         @enderror
     </div>
 
-    <!-- =========================
-         Estado
-         ========================= -->
-    <div>
-        <label class="block text-sm text-gray-300 mb-1">Estado</label>
-        <select name="status" class="w-full border rounded-lg p-2 bg-[#1F2933] text-white focus:ring-[#F59E0B]">
-            <option value="1" @selected(old('status', $product->status ?? 1) == 1)>Activo</option>
-            <option value="0" @selected(old('status', $product->status ?? 1) == 0)>Inactivo</option>
-        </select>
-        @error('status')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-        @enderror
-    </div>
+
 
     <!-- =========================
          Imagen con preview

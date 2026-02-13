@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use DomainException;
+use Illuminate\Validation\ValidationException;
 
 class ProductService
 {
@@ -81,6 +83,54 @@ class ProductService
      */
     public function decreaseStock(Product $product, float $quantity): void
     {
+        if ($product->stock < $quantity) {
+            throw ValidationException::withMessages([
+                'stock' => "Stock insuficiente para el producto {$product->name}"
+            ]);
+        }
+
         $product->decrement('stock', $quantity);
     }
+
+    public function changeStatus(Product $product, string $newStatus): Product
+    {
+        $allowedTransitions = [
+            Product::STATUS_INACTIVE => [
+                Product::STATUS_ACTIVE
+            ],
+
+            Product::STATUS_ACTIVE => [
+                Product::STATUS_PROMOTION,
+                Product::STATUS_FEATURED,
+            ],
+
+            Product::STATUS_PROMOTION => [
+                Product::STATUS_OUT_OF_STOCK,
+            ],
+
+            Product::STATUS_FEATURED => [
+                Product::STATUS_OUT_OF_STOCK,
+            ],
+
+            Product::STATUS_OUT_OF_STOCK => [
+                Product::STATUS_INACTIVE,
+            ],
+        ];
+
+        // Validar que el estado exista
+        if (!array_key_exists($newStatus, Product::STATUS_LABELS)) {
+            throw new DomainException('Estado inválido.');
+        }
+
+        // Validar transición permitida
+        if (
+            !isset($allowedTransitions[$product->status]) ||
+            !in_array($newStatus, $allowedTransitions[$product->status])
+        ) {
+            throw new DomainException('Cambio de estado no permitido.');
+        }
+
+        return $this->productRepository->updateStatus($product, $newStatus);
+    }
+
 }
