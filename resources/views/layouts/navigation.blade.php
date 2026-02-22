@@ -118,6 +118,11 @@
                         <span>Usuarios</span>
                     </a>
                 </nav>
+                <nav class="space-y-2">
+                    <a href="{{ route('customers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800">
+                        <span>Clientes</span>
+                    </a>
+                </nav>
             </div>
             @endif
 

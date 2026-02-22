@@ -31,8 +31,24 @@
 
 {{-- FILTROS --}}
 <form method="GET"
-      class="bg-[#111827] border border-[#1F2933] rounded-xl p-4 mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        class="bg-[#111827] border border-[#1F2933] rounded-xl p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+
+        {{-- Cliente --}}
+        <div>
+            <label class="block text-sm text-gray-300 mb-1">
+                Cliente
+            </label>
+            <input
+                type="text"
+                name="customer"
+                value="{{ request('customer') }}"
+                placeholder="Buscar por nombre..."
+                class="w-full bg-[#0B1220] border border-[#1F2933]
+                    rounded-lg px-3 py-2 text-white
+                    placeholder-gray-500"
+            >
+        </div>
 
         {{-- Estado --}}
         <div>
