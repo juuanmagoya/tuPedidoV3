@@ -14,6 +14,7 @@ use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Models\Customer;
 use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\ValidationException;
 
 
 class OrderController extends Controller
@@ -53,13 +54,27 @@ class OrderController extends Controller
     /**
      * Almacenar nuevo pedido
      */
+    // En el controller
     public function store(StoreOrderRequest $request, OrderService $orderService)
     {
-        $orderService->create($request->validated());
-
-        return redirect()
-            ->route('orders.index')
-            ->with('success', 'Pedido creado correctamente.');
+        try {
+            $orderService->create($request->validated());
+            
+            return redirect()
+                ->route('orders.index')
+                ->with('success', 'Pedido creado correctamente.');
+                
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\DomainException $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['error' => $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**

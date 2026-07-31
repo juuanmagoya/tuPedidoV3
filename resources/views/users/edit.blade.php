@@ -13,6 +13,24 @@
         </p>
     </div>
 
+    <!-- Mensaje de error general -->
+    @if(session('error'))
+        <div class="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Errores de validación -->
+    @if($errors->any())
+        <div class="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+            <ul class="list-disc list-inside text-sm space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div x-data>
         <form
             x-ref="form"
@@ -72,11 +90,27 @@
                     class="w-full bg-[#0B1220] border border-[#1F2933] rounded-lg px-4 py-2 text-white"
                 >
                     @foreach($statuses as $value => $label)
-                        <option value="{{ $value }}" @selected(old('status', $user->status) === $value)>
-                            {{ $label }}
-                        </option>
+
+                        {{-- No permitir volver a pending si ya no está en pending --}}
+                        @if($value === \App\Models\User::STATUS_PENDING && $user->status !== \App\Models\User::STATUS_PENDING)
+                            <option value="{{ $value }}" disabled class="text-gray-500">
+                                {{ $label }} (no se puede volver a pendiente)
+                            </option>
+                        @else
+                            <option value="{{ $value }}" @selected(old('status', $user->status) === $value)>
+                                {{ $label }}
+                            </option>
+                        @endif
+
                     @endforeach
                 </select>
+
+                {{-- Mensaje informativo --}}
+                @if($user->status !== \App\Models\User::STATUS_PENDING)
+                    <p class="text-xs text-yellow-400 mt-2">
+                        Un usuario activo o inactivo no puede volver al estado pendiente.
+                    </p>
+                @endif
             </div>
 
             <!-- Advertencia si edita su propio usuario -->

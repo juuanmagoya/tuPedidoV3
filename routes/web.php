@@ -14,6 +14,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\AiAssistantController;
+use App\Services\AiAssistant\AIService;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,45 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| AI Assistant Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('ai-assistant')
+    ->name('ai-assistant.')
+    ->middleware(['auth'])
+    ->group(function () {
+        // Vistas principales
+        Route::get('/', [AiAssistantController::class, 'index'])->name('index');
+        Route::get('/context', [AiAssistantController::class, 'businessContext'])->name('context');
+        Route::get('/module/{module}', [AiAssistantController::class, 'module'])->name('module');
+        Route::get('/test', [AiAssistantController::class, 'test'])->name('test');
+        
+        // Acciones del chat
+        Route::post('/ask', [AiAssistantController::class, 'ask'])->name('ask');
+        Route::get('/prompt', [AiAssistantController::class, 'prompt'])->name('prompt'); // Cambiado a GET
+        
+        // API / JSON Routes
+        Route::prefix('api')->name('api.')->group(function () {
+            Route::get('/dashboard', [AiAssistantController::class, 'dashboardJson'])->name('dashboard');
+            Route::get('/module/{module}', [AiAssistantController::class, 'moduleJson'])->name('module');
+            Route::get('/context', [AiAssistantController::class, 'contextJson'])->name('context');
+            Route::get('/alerts', [AiAssistantController::class, 'alerts'])->name('alerts');
+        });
+    });
+
+    Route::get('/test-ai', function () {
+    $aiService = app(AIService::class);
+    $response = $aiService->generate('Di solo: Hola, funcionando correctamente. No digas nada más.');
+    
+    return response()->json([
+        'success' => true,
+        'response' => $response,
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
 | Production Manager
 |--------------------------------------------------------------------------
 */
@@ -74,6 +115,9 @@ Route::middleware(['auth', 'role:production_manager'])->group(function () {
     [ProductController::class, 'changeStatus']
     )->name('products.change-status');
 
+    // Asistente de IA 
+    Route::get('/asistente-ia/ai-assistant', [AiAssistantController::class, 'stockCritical'])
+    ->name('ai-assistant.stock-critical');
 
 });
 

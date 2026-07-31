@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->string('payment_method');
 
-            $table->timestamp('sold_at');
+            $table->timestamp('sold_at'); 
 
             $table->timestamps();
         });

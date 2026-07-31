@@ -35,6 +35,7 @@ class PurchaseItem extends Model
         return $this->belongsTo(Purchase::class);
     }
 
+    
     public function input(): BelongsTo
     {
         return $this->belongsTo(Input::class);

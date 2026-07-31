@@ -42,6 +42,21 @@ class User extends Authenticatable
         self::STATUS_PENDING  => 'Pendiente',
     ];
 
+    public const STATUS_TRANSITIONS = [
+
+        self::STATUS_PENDING => [
+            self::STATUS_ACTIVE,
+            self::STATUS_INACTIVE,
+        ],
+
+        self::STATUS_ACTIVE => [
+            self::STATUS_INACTIVE,
+        ],
+
+        self::STATUS_INACTIVE => [
+            self::STATUS_ACTIVE,
+        ],
+    ];
     /**
      * The attributes that are mass assignable.
      *

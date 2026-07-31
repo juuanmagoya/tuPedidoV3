@@ -65,29 +65,44 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user)
-    {
-        $validated = $request->validate([
-            'name'   => 'required|string|max:255',
-            'role'   => 'required|in:' . implode(',', array_keys(User::ROLE_LABELS)),
-            'status' => 'required|in:' . implode(',', array_keys(User::STATUS_LABELS)),
-        ]);
+{
+    $validated = $request->validate([
+        'name'   => 'required|string|max:255',
+        'role'   => 'required|in:' . implode(',', array_keys(User::ROLE_LABELS)),
+        'status' => 'required|in:' . implode(',', array_keys(User::STATUS_LABELS)),
+    ]);
 
-        // Seguridad básica: evitar que se auto-inactive el último admin
-        if (
-            $user->id === Auth::id() &&
-            $validated['status'] !== User::STATUS_ACTIVE
-        ) {
+    $currentStatus = $user->status;
+    $newStatus     = $validated['status'];
+
+    // 🔒 Validar transición de estado
+    if ($currentStatus !== $newStatus) {
+
+        $allowedTransitions = User::STATUS_TRANSITIONS[$currentStatus] ?? [];
+
+        if (! in_array($newStatus, $allowedTransitions)) {
             return back()->withErrors([
-                'status' => 'No podés desactivar tu propia cuenta.',
+                'status' => 'Transición de estado no permitida.',
             ]);
         }
-
-        $user->update($validated);
-
-        return redirect()
-            ->route('users.index')
-            ->with('success', 'Usuario actualizado correctamente.');
     }
+
+    // 🔒 Evitar auto-desactivación
+    if (
+        $user->id === Auth::id() &&
+        $newStatus !== User::STATUS_ACTIVE
+    ) {
+        return back()->withErrors([
+            'status' => 'No podés desactivar tu propia cuenta.',
+        ]);
+    }
+
+    $user->update($validated);
+
+    return redirect()
+        ->route('users.index')
+        ->with('success', 'Usuario actualizado correctamente.');
+}
 
     /**
      * Eliminación lógica (opcional)
